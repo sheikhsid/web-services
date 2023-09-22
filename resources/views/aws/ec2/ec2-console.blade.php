@@ -20,31 +20,36 @@
                         </div>
                     </div>
                     <div class="mt-5 md:mt-0 md:col-span-2">
-                        <form>
+                        <form action="/aws-ec2" method="POST">
+                        @csrf
                             <div class="px-4 py-5 bg-white dark:bg-gray-800 sm:p-6 shadow sm:rounded-tl-md sm:rounded-tr-md">
                                 <div class="grid grid-cols-6 gap-6">
                                     <!-- Select Token -->
                                     <div class="col-span-6 sm:col-span-4">
-                                        <x-label for="name" value="{{ __('Select Token') }}" />
-                                        <select id="name" class="mt-1 block w-full" autofocus>
-                                        <!-- Add options here -->
+                                        <x-label for="token_id" value="{{ __('Select Token') }}" />
+                                        <select id="token_id" name="token_id" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 w-full" autofocus>
+                                            <option value="">None</option>
+                                            @foreach($accessTokens as $accessToken)
+                                                <option value="{{ $accessToken->id }}">{{ $accessToken->name }}</option>
+                                            @endforeach
                                         </select>
-                                        <x-input-error for="name" class="mt-2" />
+
+                                        <x-input-error for="token_id" class="mt-2" />
                                     </div>
                                     <div class="col-span-6 sm:col-span-4">
-                                        <x-label for="name" value="{{ __('Access Key ID') }}" />
-                                        <x-input id="name" type="text" class="mt-1 block w-full" autofocus />
-                                        <x-input-error for="name" class="mt-2" />
+                                        <x-label for="key" value="{{ __('Access Key ID') }}" />
+                                        <x-input id="key" name="key" type="text" class="mt-1 block w-full" autofocus />
+                                        <x-input-error for="key" class="mt-2" />
                                     </div>
                                     <div class="col-span-6 sm:col-span-4">
-                                        <x-label for="name" value="{{ __('Secret Access Key') }}" />
-                                        <x-input id="name" type="text" class="mt-1 block w-full" autofocus />
-                                        <x-input-error for="name" class="mt-2" />
+                                        <x-label for="secret" value="{{ __('Secret Access Key') }}" />
+                                        <x-input id="secret" name="secret" type="text" class="mt-1 block w-full" autofocus />
+                                        <x-input-error for="secret" class="mt-2" />
                                     </div>
                                     <div class="col-span-6 sm:col-span-4">
-                                        <x-label for="name" value="{{ __('Launch Template ID') }}" />
-                                        <x-input id="name" type="text" class="mt-1 block w-full" autofocus />
-                                        <x-input-error for="name" class="mt-2" />
+                                        <x-label for="template" value="{{ __('Launch Template ID') }}" />
+                                        <x-input id="template" name="template" type="text" class="mt-1 block w-full" autofocus />
+                                        <x-input-error for="template" class="mt-2" />
                                     </div>
                                 </div>
                             </div>
@@ -66,7 +71,7 @@
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('Manage AWS Credentials') }}</h3>
 
                                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                    {{ __('Controlling Access Key IDs and Secret Access Keys by adding, editing, or removing them as needed for users, ensuring secure and up-to-date access to AWS services.') }}
+                                    {{ __('Controlling Access Key IDs and Secret Access Keys by viewing or removing them as needed for users, ensuring secure and up-to-date access to AWS services.') }}
                                 </p>
                             </div>
                         </div>
@@ -74,23 +79,28 @@
                         <div class="mt-5 md:mt-0 md:col-span-2">
                             <div class="px-4 py-5 sm:p-6 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                                 <div class="space-y-6">
+                                    
+
+                                @foreach($EC2Consoles as $EC2Console)
                                     <div class="flex items-center justify-between">
                                         <div class="break-all dark:text-white">
-                                            Sheikh
+                                        @php
+                                            $accessToken = \DB::table('personal_access_tokens')
+                                                ->where('id', $EC2Console->token_id)
+                                                ->value('name');
+                                                echo $accessToken;
+                                        @endphp
                                         </div>
 
                                         <div class="flex items-center ml-2">
-                                            <button class="cursor-pointer ml-6 text-sm text-gray-400 underline">
-                                                        Permissions
-                                                    </button>
-                                            <!-- __ENDBLOCK__ -->
-
-                                            <button class="cursor-pointer ml-6 text-sm text-red-500">
-                                                    Delete
-                                            </button>
+                                            <div class="text-sm text-gray-400">Access Key: {{ $EC2Console->key }}</div>
+                                            <button class="cursor-pointer ml-6 text-sm text-gray-400 underline">{{ $EC2Console->created_at }}</button>
+                                            <a href="/aws-ec2/{id}" class="cursor-pointer ml-6 text-sm text-red-500">Delete</a>
                                         </div>
                                     </div>
-                                    <!-- __ENDBLOCK__ -->
+                                @endforeach
+
+
                                 </div>
                             </div>
                         </div>

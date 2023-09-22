@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AWSmachineVCS;
+use App\Http\Controllers\EC2ConsoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,8 +21,8 @@ use App\Http\Controllers\AWSmachineVCS;
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::resource('vcs', AWSmachineVCS::class);
-    Route::post("vcs/off/{instanceId}", [AWSmachineVCS::class,'stopInstance']);
-    Route::post("vcs/{instanceId}", [AWSmachineVCS::class,'startInstance']);
+    Route::resource('vcs', EC2ConsoleController::class);
+    Route::post("vcs/off/{instanceId}", [EC2ConsoleController::class,'stopInstance']);
+    Route::post("vcs/{instanceId}", [EC2ConsoleController::class,'startInstance']);
 
 });
