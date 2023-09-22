@@ -12,9 +12,25 @@ class AWSmachineVCS extends Controller
      */
     public function index()
     {
-        //
-        echo "Sorry, This method is not available";
+        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        echo  $accessToken->id;
+        echo  $accessToken->name;
+
+        // if ($accessToken) {
+        //     $user = \App\Models\User::find($accessToken->id);
+        //     if ($user) {
+        //         return "User Name: " . $user->name;
+        //     }
+        // }
+
+        // return response()->json(['error' => 'Unauthorized'], 401);
     }
+
 
     /**
      * Store a newly created resource in storage.
