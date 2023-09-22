@@ -26,8 +26,8 @@ class AWSmachineVCS extends Controller
             'region' => 'eu-south-1', // Set the desired AWS region
             'version' => 'latest', // Set the desired AWS SDK version
             'credentials' => [
-                'key' => 'AKIA2HY23QJW5K2ZLLY6',
-                'secret' => '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',
+                'key' => 'AKIA2HY23QJWYEAULCGA',
+                'secret' => '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',
             ],
         ]);
 
@@ -76,7 +76,7 @@ class AWSmachineVCS extends Controller
     public function show(string $id)
     {
         //
-        echo "03";
+        echo "Sorry, This method is not a variable";
 
     }
 
@@ -86,17 +86,107 @@ class AWSmachineVCS extends Controller
     public function update(Request $request, string $id)
     {
         //
-        echo "04";
+        echo "Sorry, This method is not a variable";
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-        echo "05";
+    
+    // Remove the specified resource from storage.
 
+    public function destroy(string $instanceId) {
+        try {
+            // Create a new EC2 client
+            $ec2Client = new Ec2Client([
+                'region' => 'eu-south-1', // Set the desired AWS region
+                'version' => 'latest', // Set the desired AWS SDK version
+                'credentials' => [
+                    'key' => 'AKIA2HY23QJWYEAULCGA',
+                    'secret' => '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',
+                ],
+            ]);
+    
+            // Terminate the EC2 instance
+            $result = $ec2Client->terminateInstances([
+                'InstanceIds' => [$instanceId],
+            ]);
+    
+            // Retrieve the termination state of the instance
+            $terminationState = $result->get('TerminatingInstances')[0]['CurrentState']['Name'];
+    
+            return response()->json(['message' => 'Instance terminated successfully. Termination state: ' . $terminationState], 200);
+        } catch (\Exception $e) {
+            // Handle the exception if the termination fails
+            return response()->json(['error' => 'Failed to terminate the instance: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    //START Instance
+    public function startInstance($instanceId) {
+        try {
+            // Create a new EC2 client
+            $ec2Client = new Ec2Client([
+                'region' => 'eu-south-1', // Set the desired AWS region
+                'version' => 'latest', // Set the desired AWS SDK version
+                'credentials' => [
+                    'key' => 'AKIA2HY23QJWYEAULCGA',
+                    'secret' => '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',
+                ],
+            ]);
+    
+            // Start the EC2 instance
+            $result = $ec2Client->startInstances([
+                'InstanceIds' => [$instanceId],
+            ]);
+    
+            // Retrieve the current state of the instance
+            $currentState = $result->get('StartingInstances')[0]['CurrentState']['Name'];
+    
+            // Retrieve public IP address and public DNS name of the instance
+            $instanceInfo = $ec2Client->describeInstances([
+                'InstanceIds' => [$instanceId],
+            ]);
+    
+            $publicIpAddress = $instanceInfo->get('Reservations')[0]['Instances'][0]['PublicIpAddress'];
+            $publicDnsName = $instanceInfo->get('Reservations')[0]['Instances'][0]['PublicDnsName'];
+    
+            return response()->json([
+                'publicIpAddress' => $publicIpAddress,
+                'publicDnsName' => $publicDnsName,
+                'instanceId' => $instanceId,
+                'message' => 'Instance started successfully. Current state: ' . $currentState,
+            ], 200);
+        } catch (\Exception $e) {
+            // Handle the exception if starting the instance fails
+            return response()->json(['error' => 'Failed to start the instance: ' . $e->getMessage()], 500);
+        }
+    }
+
+    //STOP Instance
+    public function stopInstance($instanceId) {
+        try {
+            // Create a new EC2 client
+            $ec2Client = new Ec2Client([
+                'region' => 'eu-south-1', // Set the desired AWS region
+                'version' => 'latest', // Set the desired AWS SDK version
+                'credentials' => [
+                    'key' => 'AKIA2HY23QJWYEAULCGA',
+                    'secret' => '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',
+                ],
+            ]);
+    
+            // Stop the EC2 instance
+            $result = $ec2Client->stopInstances([
+                'InstanceIds' => [$instanceId],
+            ]);
+    
+            // Retrieve the current state of the instance
+            $currentState = $result->get('StoppingInstances')[0]['CurrentState']['Name'];
+    
+            return response()->json(['message' => 'Instance stopped successfully. Current state: ' . $currentState], 200);
+        } catch (\Exception $e) {
+            // Handle the exception if stopping the instance fails
+            return response()->json(['error' => 'Failed to stop the instance: ' . $e->getMessage()], 500);
+        }
     }
 }
