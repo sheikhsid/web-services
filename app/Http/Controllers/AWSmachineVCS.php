@@ -13,7 +13,7 @@ class AWSmachineVCS extends Controller
     public function index()
     {
         //
-        echo "01";
+        echo "Sorry, This method is not available";
     }
 
     /**
@@ -64,9 +64,9 @@ class AWSmachineVCS extends Controller
 
         // Return the public IP address, DNS, and instance ID in the response
         return response()->json([
-            'publicIpAddress' => $publicIpAddress,
-            'publicDnsName' => $publicDnsName,
             'instanceId' => $instanceId,
+            // 'publicIpAddress' => $publicIpAddress,
+            'publicDnsName' => $publicDnsName,
         ]);
     }
 
@@ -76,7 +76,7 @@ class AWSmachineVCS extends Controller
     public function show(string $id)
     {
         //
-        echo "Sorry, This method is not a variable";
+        echo "Sorry, This method is not available";
 
     }
 
@@ -86,7 +86,7 @@ class AWSmachineVCS extends Controller
     public function update(Request $request, string $id)
     {
         //
-        echo "Sorry, This method is not a variable";
+        echo "Sorry, This method is not available";
 
     }
 
@@ -134,13 +134,24 @@ class AWSmachineVCS extends Controller
                 ],
             ]);
     
+            // Check the current state of the instance
+            $instanceInfo = $ec2Client->describeInstances([
+                'InstanceIds' => [$instanceId],
+            ]);
+    
+            $currentState = $instanceInfo->get('Reservations')[0]['Instances'][0]['State']['Name'];
+    
+            if ($currentState !== 'stopped') {
+                throw new \Exception('The instance is not in a state from which it can be started.');
+            }
+    
             // Start the EC2 instance
             $result = $ec2Client->startInstances([
                 'InstanceIds' => [$instanceId],
             ]);
     
-            // Retrieve the current state of the instance
-            $currentState = $result->get('StartingInstances')[0]['CurrentState']['Name'];
+            // Wait for the instance to reach the running state (optional)
+            $ec2Client->waitUntil('InstanceRunning', ['InstanceIds' => [$instanceId]]);
     
             // Retrieve public IP address and public DNS name of the instance
             $instanceInfo = $ec2Client->describeInstances([
@@ -151,16 +162,17 @@ class AWSmachineVCS extends Controller
             $publicDnsName = $instanceInfo->get('Reservations')[0]['Instances'][0]['PublicDnsName'];
     
             return response()->json([
-                'publicIpAddress' => $publicIpAddress,
-                'publicDnsName' => $publicDnsName,
                 'instanceId' => $instanceId,
-                'message' => 'Instance started successfully. Current state: ' . $currentState,
+                // 'publicIpAddress' => $publicIpAddress,
+                'publicDnsName' => $publicDnsName,
+                // 'message' => 'Instance started successfully. Current state: ' . $currentState,
             ], 200);
         } catch (\Exception $e) {
             // Handle the exception if starting the instance fails
             return response()->json(['error' => 'Failed to start the instance: ' . $e->getMessage()], 500);
         }
-    }
+    }     
+    
 
     //STOP Instance
     public function stopInstance($instanceId) {

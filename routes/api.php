@@ -22,5 +22,7 @@ use App\Http\Controllers\AWSmachineVCS;
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::resource('vcs', AWSmachineVCS::class);
+    Route::post("vcs/off/{instanceId}", [AWSmachineVCS::class,'stopInstance']);
+    Route::post("vcs/{instanceId}", [AWSmachineVCS::class,'startInstance']);
 
 });
