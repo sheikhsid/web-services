@@ -17,6 +17,34 @@
                             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                                 Assigning AWS credentials entails granting a user an Access Key ID and Secret Access Key, enabling secure access to AWS services.
                             </p>
+
+                            <table class="dark:text-gray-100">
+                                <tr>
+                                    <th>Resource</th>
+                                    <th>API Endpoint</th>
+                                    <th>Method</th>
+                                </tr>
+                                <tr>
+                                    <td>Create Instance</td>
+                                    <td>https://HOST/ec2</td>
+                                    <td>POST</td>
+                                </tr>
+                                <tr>
+                                    <td>Start Instance</td>
+                                    <td>https://HOST/ec2/{instanceId}</td>
+                                    <td>POST</td>
+                                </tr>
+                                <tr>
+                                    <td>Stop Instance</td>
+                                    <td>https://HOST/ec2/off/{instanceId}</td>
+                                    <td>POST</td>
+                                </tr>
+                                <tr>
+                                    <td>Terminate</td>
+                                    <td>https://HOST/ec2/{instanceId}</td>
+                                    <td>DELETE</td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                     <div class="mt-5 md:mt-0 md:col-span-2">
@@ -30,7 +58,7 @@
                                         <select id="token_id" name="token_id" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm mt-1 w-full" autofocus>
                                             <option value="">None</option>
                                             @foreach($accessTokens as $accessToken)
-                                                <option value="{{ $accessToken->id }}">{{ $accessToken->name }}</option>
+                                                <option value="{{ $accessToken->id }}" style="@if(\App\Models\EC2Console::where('token_id', $accessToken->id)->exists())display:none;@endif">{{ $accessToken->name }}</option>
                                             @endforeach
                                         </select>
 

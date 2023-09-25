@@ -19,7 +19,7 @@
 
             <!-- Token Permissions -->
             @if (Laravel\Jetstream\Jetstream::hasPermissions())
-                <div class="col-span-6">
+                <div class="col-span-6" style="display:none;">
                     <x-label for="permissions" value="{{ __('Permissions') }}" />
 
                     <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
