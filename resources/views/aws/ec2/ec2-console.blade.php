@@ -95,7 +95,7 @@
                                         <div class="flex items-center ml-2">
                                             <div class="text-sm text-gray-400">Access Key: {{ $EC2Console->key }}</div>
                                             <button class="cursor-pointer ml-6 text-sm text-gray-400 underline">{{ $EC2Console->created_at }}</button>
-                                            <a href="/aws-ec2/{id}" class="cursor-pointer ml-6 text-sm text-red-500">Delete</a>
+                                            <a href="/aws-ec2/{{ $EC2Console->id }}" class="cursor-pointer ml-6 text-sm text-red-500">Delete</a>
                                         </div>
                                     </div>
                                 @endforeach

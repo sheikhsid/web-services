@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EC2Console;
+use Aws\Ec2\Ec2Client;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
@@ -47,9 +48,9 @@ class EC2ConsoleController extends Controller
      //Delete Data
      function deleteCredentials($id){
 
-        $data= Product::find($id);
+        $data= EC2Console::find($id);
         $data->delete();  
-        return redirect('admin/products');      
+        return redirect('/aws-ec2');     
 
     }
     
@@ -67,14 +68,18 @@ class EC2ConsoleController extends Controller
      */
     public function index()
     {
-        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+        // $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
 
-        $accessToken = \DB::table('personal_access_tokens')
-            ->where('token', hash('sha256', $userToken))
-            ->first();
+        // $accessToken = \DB::table('personal_access_tokens')
+        //     ->where('token', hash('sha256', $userToken))
+        //     ->first();
 
-        echo  $accessToken->id;
-        echo  $accessToken->name;
+        // echo $EC2Consoles = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
+        
+        
+        
+        // echo  $accessToken->id;
+        // echo  $accessToken->name;
     }
 
 
@@ -83,13 +88,14 @@ class EC2ConsoleController extends Controller
      */
     public function store(Request $request)
     {
+
         // Create a new EC2 client
         $ec2Client = new Ec2Client([
             'region' => 'eu-south-1', // Set the desired AWS region
             'version' => 'latest', // Set the desired AWS SDK version
             'credentials' => [
-                'key' => 'AKIA2HY23QJWYEAULCGA',
-                'secret' => '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',
+                'key' => 'AKIA2HY23QJW3LFD4EOV',
+                'secret' => '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',
             ],
         ]);
 
@@ -156,14 +162,23 @@ class EC2ConsoleController extends Controller
     // Remove the specified resource from storage.
 
     public function destroy(string $instanceId) {
+
+        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
+
         try {
             // Create a new EC2 client
             $ec2Client = new Ec2Client([
                 'region' => 'eu-south-1', // Set the desired AWS region
                 'version' => 'latest', // Set the desired AWS SDK version
                 'credentials' => [
-                    'key' => 'AKIA2HY23QJWYEAULCGA',
-                    'secret' => '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',
+                    'key' => $EC2Console->key,
+                    'secret' => $EC2Console->secret,
                 ],
             ]);
     
@@ -191,61 +206,75 @@ class EC2ConsoleController extends Controller
                 'region' => 'eu-south-1', // Set the desired AWS region
                 'version' => 'latest', // Set the desired AWS SDK version
                 'credentials' => [
-                    'key' => 'AKIA2HY23QJWYEAULCGA',
-                    'secret' => '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',
+                    'key' => 'AKIA2HY23QJW3LFD4EOV',
+                    'secret' => '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',
+                    // 'key' => getenv('AWS_ACCESS_KEY_ID'),
+                    // 'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
                 ],
             ]);
-    
+
             // Check the current state of the instance
             $instanceInfo = $ec2Client->describeInstances([
                 'InstanceIds' => [$instanceId],
             ]);
-    
+
             $currentState = $instanceInfo->get('Reservations')[0]['Instances'][0]['State']['Name'];
-    
+
             if ($currentState !== 'stopped') {
-                throw new \Exception('The instance is not in a state from which it can be started.');
+                return response()->json(['error' => 'The instance is not in a state from which it can be started.'], 400);
             }
-    
+
             // Start the EC2 instance
             $result = $ec2Client->startInstances([
                 'InstanceIds' => [$instanceId],
             ]);
-    
+
             // Wait for the instance to reach the running state (optional)
             $ec2Client->waitUntil('InstanceRunning', ['InstanceIds' => [$instanceId]]);
-    
+
             // Retrieve public IP address and public DNS name of the instance
             $instanceInfo = $ec2Client->describeInstances([
                 'InstanceIds' => [$instanceId],
             ]);
-    
+
+            if (!isset($instanceInfo['Reservations'][0]['Instances'][0])) {
+                return response()->json(['error' => 'Instance information not available.'], 500);
+            }
+
             $publicIpAddress = $instanceInfo->get('Reservations')[0]['Instances'][0]['PublicIpAddress'];
             $publicDnsName = $instanceInfo->get('Reservations')[0]['Instances'][0]['PublicDnsName'];
-    
+
             return response()->json([
                 'instanceId' => $instanceId,
-                // 'publicIpAddress' => $publicIpAddress,
                 'publicDnsName' => $publicDnsName,
-                // 'message' => 'Instance started successfully. Current state: ' . $currentState,
             ], 200);
         } catch (\Exception $e) {
-            // Handle the exception if starting the instance fails
             return response()->json(['error' => 'Failed to start the instance: ' . $e->getMessage()], 500);
         }
-    }     
+    }
+    
     
 
     //STOP Instance
     public function stopInstance($instanceId) {
+
+        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
+        
+
         try {
             // Create a new EC2 client
             $ec2Client = new Ec2Client([
                 'region' => 'eu-south-1', // Set the desired AWS region
                 'version' => 'latest', // Set the desired AWS SDK version
                 'credentials' => [
-                    'key' => 'AKIA2HY23QJWYEAULCGA',
-                    'secret' => '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',
+                    'key' => $EC2Console->key,
+                    'secret' => $EC2Console->secret,
                 ],
             ]);
     
