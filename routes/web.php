@@ -14,9 +14,10 @@ use App\Http\Controllers\EC2ConsoleController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+Route::match(['get', 'post'], '/register', fn() => abort(404));
 
 Route::middleware(['auth:sanctum',config('jetstream.auth_session'),'verified',])->group(function () 
     {

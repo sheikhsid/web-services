@@ -88,14 +88,21 @@ class EC2ConsoleController extends Controller
      */
     public function store(Request $request)
     {
+        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
 
         // Create a new EC2 client
         $ec2Client = new Ec2Client([
             'region' => 'eu-south-1', // Set the desired AWS region
             'version' => 'latest', // Set the desired AWS SDK version
             'credentials' => [
-                'key' => 'AKIA2HY23QJW3LFD4EOV',
-                'secret' => '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',
+                'key' => $EC2Console->key,
+                'secret' => $EC2Console->secret,
             ],
         ]);
 
@@ -200,16 +207,24 @@ class EC2ConsoleController extends Controller
 
     //START Instance
     public function startInstance($instanceId) {
+
+        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
+        
+
         try {
             // Create a new EC2 client
             $ec2Client = new Ec2Client([
                 'region' => 'eu-south-1', // Set the desired AWS region
                 'version' => 'latest', // Set the desired AWS SDK version
                 'credentials' => [
-                    'key' => 'AKIA2HY23QJW3LFD4EOV',
-                    'secret' => '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',
-                    // 'key' => getenv('AWS_ACCESS_KEY_ID'),
-                    // 'secret' => getenv('AWS_SECRET_ACCESS_KEY'),
+                    'key' => $EC2Console->key,
+                    'secret' => $EC2Console->secret,
                 ],
             ]);
 
