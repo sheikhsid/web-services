@@ -22,9 +22,9 @@ Route::middleware(['auth:sanctum',config('jetstream.auth_session'),'verified',])
     {
         Route::get('/dashboard', function () {return view('dashboard');})->name('dashboard');
 
-        Route::get('/aws-ec2',[EC2ConsoleController::class,'getCredentials'])->name('/aws-ec2');
-        Route::post('/aws-ec2',[EC2ConsoleController::class,'addCredentials'])->name('/aws-ec2');
-        Route::get('/aws-ec2/{id}',[EC2ConsoleController::class,'deleteCredentials'])->name('/aws-ec2');
+        Route::get('/ec2-console',[EC2ConsoleController::class,'getCredentials'])->name('/ec2-console');
+        Route::post('/ec2-console',[EC2ConsoleController::class,'addCredentials'])->name('/ec2-console');
+        Route::get('/ec2-console/{id}',[EC2ConsoleController::class,'deleteCredentials'])->name('/ec2-console');
         
     }
 );

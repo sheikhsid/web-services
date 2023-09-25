@@ -98,7 +98,7 @@
                                 {{ __('Credentials Area') }}
                             </div>
 
-                            <x-dropdown-link href="/aws-ec2">
+                            <x-dropdown-link href="/ec2-console">
                                 {{ __('AWS EC2 Console') }}
                             </x-dropdown-link>
 

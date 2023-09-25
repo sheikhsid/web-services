@@ -41,7 +41,7 @@ class EC2ConsoleController extends Controller
         $credential->template=$req->template;
         $credential->save();
 
-        return redirect('/aws-ec2');
+        return redirect('/ec2-console');
 
     }
 
@@ -50,7 +50,7 @@ class EC2ConsoleController extends Controller
 
         $data= EC2Console::find($id);
         $data->delete();  
-        return redirect('/aws-ec2');     
+        return redirect('/ec2-console');     
 
     }
     
