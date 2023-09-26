@@ -236,7 +236,7 @@ class EC2ConsoleController extends Controller
             $currentState = $instanceInfo->get('Reservations')[0]['Instances'][0]['State']['Name'];
 
             if ($currentState !== 'stopped') {
-                return response()->json(['error' => 'The instance is not in a state from which it can be started.'], 400);
+                return response()->json(['error' => 'Current state: ' . $currentState], 400);
             }
 
             // Start the EC2 instance
@@ -301,7 +301,7 @@ class EC2ConsoleController extends Controller
             // Retrieve the current state of the instance
             $currentState = $result->get('StoppingInstances')[0]['CurrentState']['Name'];
     
-            return response()->json(['message' => 'Instance stopped successfully. Current state: ' . $currentState], 200);
+            return response()->json(['message' => 'Current state: ' . $currentState], 200);
         } catch (\Exception $e) {
             // Handle the exception if stopping the instance fails
             return response()->json(['error' => 'Failed to stop the instance: ' . $e->getMessage()], 500);
