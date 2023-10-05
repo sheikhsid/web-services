@@ -24,5 +24,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('ec2', EC2ConsoleController::class);
     Route::post("ec2/{instanceId}", [EC2ConsoleController::class,'startInstance']);
     Route::post("ec2/off/{instanceId}", [EC2ConsoleController::class,'stopInstance']);
+    Route::post("ec2/boot/{instanceId}", [EC2ConsoleController::class,'rebootInstance']);
     
 });

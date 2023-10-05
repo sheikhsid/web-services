@@ -115,7 +115,7 @@ class EC2ConsoleController extends Controller
             'MaxCount' => $maxCount,
             'MinCount' => $minCount,
             'LaunchTemplate' => [
-                'LaunchTemplateId' => 'lt-0bdb883466bd7d7d9', // Replace with the desired Launch Template ID
+                'LaunchTemplateId' => $EC2Console->template, // Replace with the desired Launch Template ID
                 'Version' => '1', // Replace with the desired Launch Template version
             ],
         ]);
@@ -176,7 +176,7 @@ class EC2ConsoleController extends Controller
             ->where('token', hash('sha256', $userToken))
             ->first();
 
-        $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
+        $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
 
         try {
             // Create a new EC2 client
@@ -214,7 +214,7 @@ class EC2ConsoleController extends Controller
             ->where('token', hash('sha256', $userToken))
             ->first();
 
-        $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
+        $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
         
 
         try {
@@ -279,7 +279,7 @@ class EC2ConsoleController extends Controller
             ->where('token', hash('sha256', $userToken))
             ->first();
 
-        $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
+        $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
         
 
         try {
@@ -307,4 +307,42 @@ class EC2ConsoleController extends Controller
             return response()->json(['error' => 'Failed to stop the instance: ' . $e->getMessage()], 500);
         }
     }
+
+    public function rebootInstance($instanceId) {
+
+        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+    
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+    
+        $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
+    
+        try {
+            // Create a new EC2 client
+            $ec2Client = new Ec2Client([
+                'region' => 'eu-south-1', // Set the desired AWS region
+                'version' => 'latest', // Set the desired AWS SDK version
+                'credentials' => [
+                    'key' => $EC2Console->key,
+                    'secret' => $EC2Console->secret,
+                ],
+            ]);
+    
+            // Reboot the EC2 instance
+            $result = $ec2Client->rebootInstances([
+                'InstanceIds' => [$instanceId],
+            ]);
+
+            if ($result && isset($result['RebootingInstances'][0]['CurrentState']['Name'])) {
+                $currentState = $result['RebootingInstances'][0]['CurrentState']['Name'];
+                return response()->json(['message' => 'Current state after reboot: ' . $currentState], 200);
+            } else {
+                return response()->json(['error' => 'Failed to get current state after reboot.'], 500);
+            }
+        } catch (\Exception $e) {
+            // Handle the exception if rebooting the instance fails
+            return response()->json(['error' => 'Failed to reboot the instance: ' . $e->getMessage()], 500);
+        }
+    }    
 }
