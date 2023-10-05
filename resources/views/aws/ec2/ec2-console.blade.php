@@ -40,6 +40,11 @@
                                     <td>POST</td>
                                 </tr>
                                 <tr>
+                                    <td>Reboot Instance</td>
+                                    <td>https://HOST/ec2/boot/{instanceId}</td>
+                                    <td>POST</td>
+                                </tr>
+                                <tr>
                                     <td>Terminate</td>
                                     <td>https://HOST/ec2/{instanceId}</td>
                                     <td>DELETE</td>
