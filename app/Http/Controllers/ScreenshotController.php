@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Screenshot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class ScreenshotController extends Controller
 {
@@ -32,23 +33,32 @@ class ScreenshotController extends Controller
      */
     public function store(Request $request)
     {
-
         // Validate the request
         $request->validate([
-            'file' => 'required|image|mimes:bmp|max:30720', 
+            'file' => 'required|image|mimes:bmp|max:30720',
         ]);
 
         // Handle file upload
         $file = $request->file('file');
-        $path = $file->store('screenshots');
+
+        // Compress BMP file
+        $compressedImage = Image::make($file);
+        $compressedImage->encode('bmp', 75); // Adjust quality as needed (0-100)
+
+        // Generate a unique file name
+        $fileName = 'compressed_' . time() . '.bmp';
+
+        // Store the compressed image
+        $compressedImage->save(storage_path('app/screenshots/' . $fileName));
 
         // Create a new Screenshot record
         $screenshot = new Screenshot();
-        $screenshot->file_path = $path;
+        $screenshot->file_path = 'screenshots/' . $fileName;
         $screenshot->save();
 
-        return response()->json(['message' => 'Screenshot uploaded successfully']);
+        return response()->json(['message' => 'Screenshot uploaded and compressed successfully']);
     }
+
 
 
     /**
