@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EC2ConsoleController;
+use App\Http\Controllers\ScreenshotController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,5 +26,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post("ec2/{instanceId}", [EC2ConsoleController::class,'startInstance']);
     Route::post("ec2/off/{instanceId}", [EC2ConsoleController::class,'stopInstance']);
     Route::post("ec2/boot/{instanceId}", [EC2ConsoleController::class,'rebootInstance']);
-    
+
+    //Screenshot Routes
+    Route::resource('screenshots', ScreenshotController::class);
+    // Route::post('/screenshots', 'ScreenshotController@store');
+    // Route::get('/screenshots/{screenshot}', 'ScreenshotController@show');
+    // Route::delete('/screenshots/{screenshot}', 'ScreenshotController@destroy');
+
 });
