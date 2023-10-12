@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\EC2Console;
+use App\Models\EC2Instance;
 use Aws\Ec2\Ec2Client;
 use Illuminate\Http\Request;
 use App\Models\Product;

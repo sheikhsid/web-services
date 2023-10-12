@@ -41,14 +41,14 @@ class ScreenshotController extends Controller
         // Handle file upload
         $file = $request->file('file');
 
-        // Compress BMP file
-        $compressedImage = Image::make($file);
-        $compressedImage->encode('bmp', 75); // Adjust quality as needed (0-100)
-
         // Generate a unique file name
-        $fileName = 'compressed_' . time() . '.bmp';
+        $fileName = 'compressed_' . time() . '.jpg'; // Change the extension to jpeg for compression
 
-        // Store the compressed image
+        // Compress and save the image
+        $compressedImage = Image::make($file);
+        $compressedImage->resize(800, 600); // Resize before saving
+        $compressedImage->interlace(true); // Enable progressive scan
+        $compressedImage->encode('jpg', 50); // Adjust quality as needed (0-100)
         $compressedImage->save(storage_path('app/screenshots/' . $fileName));
 
         // Create a new Screenshot record
@@ -58,6 +58,7 @@ class ScreenshotController extends Controller
 
         return response()->json(['message' => 'Screenshot uploaded and compressed successfully']);
     }
+
 
 
 
