@@ -138,33 +138,52 @@ class EC2ConsoleController extends Controller
         $publicIpAddress = $result->get('Reservations')[0]['Instances'][0]['PublicIpAddress'];
         $publicDnsName = $result->get('Reservations')[0]['Instances'][0]['PublicDnsName'];
 
+        $e_c2_instances= new EC2Instance;
+        $e_c2_instances->instanceId=$instanceId;
+        $e_c2_instances->publicDnsName="Waiting for URL";
+        $e_c2_instances->save();
+
         // Return the public IP address, DNS, and instance ID in the response
         return response()->json([
             'instanceId' => $instanceId,
             // 'publicIpAddress' => $publicIpAddress,
-            'publicDnsName' => $publicDnsName,
+            // 'publicDnsName' => $publicDnsName,
         ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $instanceId)
     {
-        //
-        echo "Sorry, This method is not available";
+        $EC2Instance = EC2Instance::where('instanceId', $instanceId)->select('publicDnsName')->first();
 
+        return [
+            "publicDnsName" => $EC2Instance->publicDnsName,
+        ];
     }
+
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $instanceId)
     {
-        //
-        echo "Sorry, This method is not available";
+        $requestData = $request->all();
 
+        $EC2Instance = EC2Instance::where('instanceId', $instanceId)->first();
+
+        if (!$EC2Instance) {
+            return response()->json(['message' => 'Instance not found'], 404);
+        }
+
+        $EC2Instance->publicDnsName = $requestData['publicDnsName'];
+        $EC2Instance->save();
+
+        return response()->json(['message' => 'Instance updated successfully'], 200);
     }
+
 
     
     // Remove the specified resource from storage.
@@ -262,7 +281,7 @@ class EC2ConsoleController extends Controller
 
             return response()->json([
                 'instanceId' => $instanceId,
-                'publicDnsName' => $publicDnsName,
+                // 'publicDnsName' => $publicDnsName,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to start the instance: ' . $e->getMessage()], 500);

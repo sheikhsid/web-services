@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('e_c2_instances', function (Blueprint $table) {
             $table->id();
+            $table->string('instanceId')->unique();
+            $table->string('publicDnsName');
             $table->timestamps();
         });
     }
