@@ -15,7 +15,7 @@ class ScreenshotController extends Controller
     public function index()
     {
         // Return a JSON response of all screenshots
-        $screenshots = Screenshot::all();
+        $screenshots = Screenshot::all('id','file_path');
         return response()->json($screenshots);
     }
 
@@ -35,11 +35,14 @@ class ScreenshotController extends Controller
     {
         // Validate the request
         $request->validate([
-            'file' => 'required|image|mimes:bmp|max:30720',
+            'file' => 'required|string', // Assuming 'file' is the key for the Base64 encoded string
         ]);
 
-        // Handle file upload
-        $file = $request->file('file');
+        // Get the base64 encoded file content from the request
+        $base64File = $request->input('file');
+
+        // Convert the base64 data to a file
+        $file = base64_decode($base64File);
 
         // Generate a unique file name
         $fileName = 'compressed_' . time() . '.jpg'; // Change the extension to jpeg for compression
@@ -58,6 +61,7 @@ class ScreenshotController extends Controller
 
         return response()->json(['message' => 'Screenshot uploaded and compressed successfully']);
     }
+
 
 
 
