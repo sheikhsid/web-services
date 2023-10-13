@@ -272,6 +272,8 @@ class EC2ConsoleController extends Controller
                 'InstanceIds' => [$instanceId],
             ]);
 
+            
+
             if (!isset($instanceInfo['Reservations'][0]['Instances'][0])) {
                 return response()->json(['error' => 'Instance information not available.'], 500);
             }
@@ -286,6 +288,15 @@ class EC2ConsoleController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to start the instance: ' . $e->getMessage()], 500);
         }
+
+        $e_c2_instance = EC2Instance::where('instanceId', $instanceId)->first();
+
+            if ($e_c2_instance) {
+                $e_c2_instance->publicDnsName = "Waiting for URL";
+                $e_c2_instance->save();
+            } else {
+                // Handle case where instance with given instanceId was not found
+            }
     }
     
     
