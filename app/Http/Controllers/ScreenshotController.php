@@ -45,22 +45,19 @@ class ScreenshotController extends Controller
         $file = base64_decode($base64File);
 
         // Generate a unique file name
-        $fileName = 'compressed_' . time() . '.jpg'; // Change the extension to jpeg for compression
+        $fileName = 'screenshot_' . time() . '.jpg';
 
-        // Compress and save the image
-        $compressedImage = Image::make($file);
-        $compressedImage->resize(800, 600); // Resize before saving
-        $compressedImage->interlace(true); // Enable progressive scan
-        $compressedImage->encode('jpg', 50); // Adjust quality as needed (0-100)
-        $compressedImage->save(storage_path('app/screenshots/' . $fileName));
+        // Save the image
+        file_put_contents(storage_path('app/screenshots/' . $fileName), $file);
 
         // Create a new Screenshot record
         $screenshot = new Screenshot();
-        $screenshot->file_path = 'screenshots/' . $fileName;
+        $screenshot->file_path = $fileName;
         $screenshot->save();
 
-        return response()->json(['message' => 'Screenshot uploaded and compressed successfully']);
+        return response()->json(['message' => 'Screenshot uploaded successfully']);
     }
+
 
 
 
