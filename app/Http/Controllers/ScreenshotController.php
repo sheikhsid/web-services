@@ -55,8 +55,9 @@ class ScreenshotController extends Controller
         $screenshot->file_path = $fileName;
         $screenshot->save();
 
-        return response()->json(['message' => 'Screenshot uploaded successfully']);
+        return response()->json(['message' => 'Screenshot uploaded successfully', 'id' => $screenshot->id]);
     }
+
 
 
 
@@ -66,11 +67,23 @@ class ScreenshotController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($filename)
+    public function show($id)
     {
-        $path = storage_path("app/screenshots/{$filename}");
-        return response()->download($path);
+        $image = Screenshot::findOrFail($id);
+        $path = storage_path("app/screenshots/{$image->file_path}");
+        
+        // Read the file
+        $fileContents = file_get_contents($path);
+        
+        // Encode the file contents as base64
+        $base64 = base64_encode($fileContents);
+
+        return response()->json([
+            'file' => $base64
+        ]);
     }
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -93,8 +106,14 @@ class ScreenshotController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Screenshot $screenshot)
+    public function destroy($id)
     {
+        $screenshot = Screenshot::find($id);
+
+        if (!$screenshot) {
+            return response()->json(['message' => 'Screenshot not found'], 404);
+        }
+
         // Delete the file from storage
         Storage::delete($screenshot->file_path);
 
@@ -103,4 +122,5 @@ class ScreenshotController extends Controller
 
         return response()->json(['message' => 'Screenshot deleted successfully']);
     }
+
 }
