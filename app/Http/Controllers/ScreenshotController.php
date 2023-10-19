@@ -45,10 +45,10 @@ class ScreenshotController extends Controller
         $file = base64_decode($base64File);
 
         // Generate a unique file name
-        $fileName = 'screenshot_' . time() . '.jpg';
+        $fileName = 'ss_' . time() . '.jpg';
 
-        // Save the image
-        file_put_contents(storage_path('app/screenshots/' . $fileName), $file);
+        // Save the image to the storage/app/public directory
+        file_put_contents(public_path('screenshots/' . $fileName), $file);
 
         // Create a new Screenshot record
         $screenshot = new Screenshot();
@@ -64,17 +64,23 @@ class ScreenshotController extends Controller
 
 
 
+
     /**
      * Display the specified resource.
      */
     public function show($id)
     {
         $image = Screenshot::findOrFail($id);
-        $path = storage_path("app/screenshots/{$image->file_path}");
-        
+        $path = public_path("screenshots/{$image->file_path}");
+            
+        // Check if the file exists
+        if (!file_exists($path)) {
+            return response()->json(['error' => 'Image not found'], 404);
+        }
+
         // Read the file
         $fileContents = file_get_contents($path);
-        
+            
         // Encode the file contents as base64
         $base64 = base64_encode($fileContents);
 
@@ -82,6 +88,7 @@ class ScreenshotController extends Controller
             'file' => $base64
         ]);
     }
+
 
 
 
