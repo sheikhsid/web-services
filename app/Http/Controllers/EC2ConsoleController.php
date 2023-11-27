@@ -6,7 +6,6 @@ use App\Models\EC2Console;
 use App\Models\EC2Instance;
 use Aws\Ec2\Ec2Client;
 use Illuminate\Http\Request;
-use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
 
 class EC2ConsoleController extends Controller
@@ -89,7 +88,7 @@ class EC2ConsoleController extends Controller
      */
     public function store(Request $request)
     {
-        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+        $userToken = request()->bearerToken();
 
         $accessToken = \DB::table('personal_access_tokens')
             ->where('token', hash('sha256', $userToken))

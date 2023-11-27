@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EC2ConsoleController;
+use App\Http\Controllers\WBConsoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,11 +23,18 @@ Route::match(['get', 'post'], '/register', fn() => abort(404));
 
 Route::middleware(['auth:sanctum',config('jetstream.auth_session'),'verified',])->group(function () 
     {
+        //Main Dashboard
         Route::get('/dashboard', function () {return view('dashboard');})->name('dashboard');
 
+        //AWS Routes
         Route::get('/ec2-console',[EC2ConsoleController::class,'getCredentials'])->name('/ec2-console');
         Route::post('/ec2-console',[EC2ConsoleController::class,'addCredentials'])->name('/ec2-console');
         Route::get('/ec2-console/{id}',[EC2ConsoleController::class,'deleteCredentials'])->name('/ec2-console');
-        
+
+        //whereBy Routes
+        Route::get('/whereby-console',[WBConsoleController::class,'getCredentials'])->name('/ec2-console');
+        Route::post('/whereby-console',[WBConsoleController::class,'addCredentials'])->name('/ec2-console');
+        Route::get('/whereby-console/{id}',[WBConsoleController::class,'deleteCredentials'])->name('/ec2-console');
+
     }
 );

@@ -102,6 +102,10 @@
                                 {{ __('AWS EC2 Console') }}
                             </x-dropdown-link>
 
+                            <x-dropdown-link href="/whereby-console">
+                                {{ __('Whereby Console') }}
+                            </x-dropdown-link>
+
 
                             <!-- <div class="border-t border-gray-200 dark:border-gray-600"></div> -->
 
