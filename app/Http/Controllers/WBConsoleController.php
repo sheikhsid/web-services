@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WBConsole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class WBConsoleController extends Controller
 {
@@ -26,7 +27,7 @@ class WBConsoleController extends Controller
 
         $req->validate([
             'token_id'=>'required | max:225',
-            'bearer'=>'required | max:225',
+            'bearer'=>'required | max:500',
         ]);
 
         $credential= new WBConsole;
@@ -55,7 +56,8 @@ class WBConsoleController extends Controller
      */
     public function index()
     {
-        //
+        // Not Available
+        echo "index";
     }
 
     /**
@@ -63,7 +65,7 @@ class WBConsoleController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -71,7 +73,39 @@ class WBConsoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Create the Room
+
+        $userToken = request()->bearerToken();
+
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+       $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
+
+        // $room = str_replace(' ', '-', $req->room);
+
+        $url = 'https://api.whereby.dev/v1/meetings';
+
+        echo $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $WBConsole->bearer,
+        ])->post($url, [
+            'isLocked' => true,
+            'roomNamePrefix' => '$room',
+            'roomNamePattern' => 'uuid',
+            'roomMode' => 'group',
+            'endDate' => '2030-09-10',
+            'fields' => [
+                'hostRoomUrl'
+            ]
+        ]);
+
+
+        // Return the meetingId, and hostRoomUrl in the response
+        return response()->json([
+            'meetingId' => $meetingId,
+            'hostRoomUrl' => $hostRoomUrl,
+        ]);
     }
 
     /**
@@ -80,6 +114,7 @@ class WBConsoleController extends Controller
     public function show(WBConsole $wBConsole)
     {
         //
+        echo "show";
     }
 
     /**
@@ -88,6 +123,7 @@ class WBConsoleController extends Controller
     public function edit(WBConsole $wBConsole)
     {
         //
+        echo "edit";
     }
 
     /**
@@ -96,13 +132,30 @@ class WBConsoleController extends Controller
     public function update(Request $request, WBConsole $wBConsole)
     {
         //
+        echo "update";
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(WBConsole $wBConsole)
+    public function destroy($id)
     {
-        //
+        $userToken = request()->bearerToken();
+
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
+
+        $url = 'https://api.whereby.dev/v1/meetings/'.$id;
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer '.$WBConsole->bearer,
+            'Accept' => 'application/json',
+        ])->delete($url);
+
+        return response()->json(['message' => 'Room destroy successfully. Room ID: ' . $roomId], 200);
     }
 }
