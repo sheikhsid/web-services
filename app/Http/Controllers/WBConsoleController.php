@@ -14,9 +14,9 @@ class WBConsoleController extends Controller
      * Opration of Whereby Console
     **/ 
 
-     function getCredentials(){
+    function getCredentials(){
         
-        $WBConsoles = WBConsole::all();
+        $WBConsoles = WBConsole::all()->where('user', Auth::user()->id);
         $accessTokens = \DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->select('id', 'name')->get();
     
         return view('whereby.whereby-console', compact('WBConsoles','accessTokens'));
@@ -73,6 +73,12 @@ class WBConsoleController extends Controller
      */
     public function store(Request $request)
     {
+
+        // Validate the request
+        $request->validate([
+            'roomName' => 'required|string', 
+        ]);
+
         // Create the Room
 
         $userToken = request()->bearerToken();
@@ -83,7 +89,8 @@ class WBConsoleController extends Controller
 
         $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
 
-        // $room = str_replace(' ', '-', $req->room);
+        // Get room name from the request payload
+        $roomName = $request->input('roomName');
 
         $url = 'https://api.whereby.dev/v1/meetings';
 
@@ -91,7 +98,7 @@ class WBConsoleController extends Controller
             'Authorization' => 'Bearer ' . $WBConsole->bearer,
         ])->post($url, [
             'isLocked' => true,
-            'roomNamePrefix' => 'webroom',
+            'roomNamePrefix' => $roomName,
             'roomNamePattern' => 'uuid',
             'roomMode' => 'group',
             'endDate' => '2030-09-10',

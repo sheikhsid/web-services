@@ -17,7 +17,7 @@ class EC2ConsoleController extends Controller
 
     function getCredentials(){
         
-        $EC2Consoles = EC2Console::all();
+        $EC2Consoles = EC2Console::all()->where('user', Auth::user()->id);
         $accessTokens = \DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->select('id', 'name')->get();
     
         return view('aws.ec2.ec2-console', compact('EC2Consoles', 'accessTokens'));
