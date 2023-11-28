@@ -25,7 +25,7 @@
                                     <th>Method</th>
                                 </tr>
                                 <tr>
-                                    <td>Create Instance</td>
+                                    <td>Create Room</td>
                                     <td>https://<span title="{{ parse_url(url(''), PHP_URL_HOST) }}" style="color: #6875f5;">HOST</span>/wb</td>
                                     <td>POST</td>
                                 </tr>
@@ -33,6 +33,16 @@
                                     <td>Required</td>
                                     <td>Key: roomName</td>
                                     <td>Value</td>
+                                </tr>
+                                <tr>
+                                    <td></br></td>
+                                    <td></br></td>
+                                    <td></br></td>
+                                </tr>
+                                <tr>
+                                    <td>Delete Room</td>
+                                    <td>https://<span title="{{ parse_url(url(''), PHP_URL_HOST) }}" style="color: #6875f5;">HOST</span>/wb/{roomId}</td>
+                                    <td>DELETE</td>
                                 </tr>
                             </table>
                         </div>
