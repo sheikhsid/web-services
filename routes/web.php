@@ -15,9 +15,7 @@ use App\Http\Controllers\WBConsoleController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () { return redirect('/login'); });
 
 Route::match(['get', 'post'], '/register', fn() => abort(404));
 

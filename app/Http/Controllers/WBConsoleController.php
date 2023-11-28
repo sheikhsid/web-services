@@ -89,8 +89,13 @@ class WBConsoleController extends Controller
 
         $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
 
+        if (!$WBConsole) {
+            return response()->json(['error' => 'Invalid token for Whereby'], 401);
+        }
+
         // Get room name from the request payload
-        $roomName = $request->input('roomName');
+        $room = $request->input('roomName');
+        $roomName = str_replace(' ', '-', $room);
 
         $url = 'https://api.whereby.dev/v1/meetings';
 
@@ -157,6 +162,10 @@ class WBConsoleController extends Controller
             ->first();
 
         $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
+
+        if (!$WBConsole) {
+            return response()->json(['error' => 'Invalid token for Whereby'], 401);
+        }
 
         $url = 'https://api.whereby.dev/v1/meetings/'.$id;
 
