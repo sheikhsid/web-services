@@ -81,17 +81,17 @@ class WBConsoleController extends Controller
             ->where('token', hash('sha256', $userToken))
             ->first();
 
-       $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
+        $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
 
         // $room = str_replace(' ', '-', $req->room);
 
         $url = 'https://api.whereby.dev/v1/meetings';
 
-        echo $response = Http::withHeaders([
+        $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $WBConsole->bearer,
         ])->post($url, [
             'isLocked' => true,
-            'roomNamePrefix' => '$room',
+            'roomNamePrefix' => 'webroom',
             'roomNamePattern' => 'uuid',
             'roomMode' => 'group',
             'endDate' => '2030-09-10',
@@ -100,8 +100,10 @@ class WBConsoleController extends Controller
             ]
         ]);
 
+        // Extract meetingId and hostRoomUrl from the API response
+        $meetingId = $response->json('meetingId');
+        $hostRoomUrl = $response->json('hostRoomUrl');
 
-        // Return the meetingId, and hostRoomUrl in the response
         return response()->json([
             'meetingId' => $meetingId,
             'hostRoomUrl' => $hostRoomUrl,
@@ -156,6 +158,6 @@ class WBConsoleController extends Controller
             'Accept' => 'application/json',
         ])->delete($url);
 
-        return response()->json(['message' => 'Room destroy successfully. Room ID: ' . $roomId], 200);
+        return response()->json(['message' => 'Room destroy successfully. Room ID: ' . $id], 200);
     }
 }
