@@ -96,6 +96,10 @@ class EC2ConsoleController extends Controller
 
         $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
 
+        if (!$WBConsole) {
+            return response()->json(['error' => 'Invalid token for Whereby'], 401);
+        }
+
         // Create a new EC2 client
         $ec2Client = new Ec2Client([
             'region' => 'eu-south-1', // Set the desired AWS region

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\WBConsole;
+use App\Models\APIActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -90,7 +91,29 @@ class WBConsoleController extends Controller
         $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
 
         if (!$WBConsole) {
+
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Create Room";
+            $a_p_i_activities->endpoint = "https://" . parse_url(url(''), PHP_URL_HOST) . "/wb";
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "error";
+            $a_p_i_activities->save();
+
             return response()->json(['error' => 'Invalid token for Whereby'], 401);
+        
+        }else {
+            
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Create Room";
+            $a_p_i_activities->endpoint = "https://" . parse_url(url(''), PHP_URL_HOST) . "/wb";
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "success";
+            $a_p_i_activities->save();
+
         }
 
         // Get room name from the request payload
@@ -164,7 +187,29 @@ class WBConsoleController extends Controller
         $WBConsole = WBConsole::all('token_id','bearer')->where('token_id', $accessToken->id)->first();
 
         if (!$WBConsole) {
+
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Create Room";
+            $a_p_i_activities->endpoint = "https://" . parse_url(url(''), PHP_URL_HOST) . "/wb/".$id;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "error";
+            $a_p_i_activities->save();
+
             return response()->json(['error' => 'Invalid token for Whereby'], 401);
+        
+        }else {
+            
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Create Room";
+            $a_p_i_activities->endpoint = "https://" . parse_url(url(''), PHP_URL_HOST) . "/wb/".$id;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "success";
+            $a_p_i_activities->save();
+
         }
 
         $url = 'https://api.whereby.dev/v1/meetings/'.$id;

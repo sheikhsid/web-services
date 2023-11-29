@@ -95,7 +95,7 @@
                         <x-slot name="content">
                             <!-- Account Management -->
                             <div class="block px-4 py-2 text-xs text-gray-400">
-                                {{ __('Credentials Area') }}
+                                {{ __('Third Party Credentials') }}
                             </div>
 
                             <x-dropdown-link href="/ec2-console">
