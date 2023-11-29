@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EC2Console;
 use App\Models\EC2Instance;
+use App\Models\APIActivity;
 use Aws\Ec2\Ec2Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -96,8 +97,30 @@ class EC2ConsoleController extends Controller
 
         $EC2Console = EC2Console::all('token_id','key','secret','template')->where('token_id', $accessToken->id)->first();
 
-        if (!$WBConsole) {
-            return response()->json(['error' => 'Invalid token for Whereby'], 401);
+        if (!$EC2Console) {
+
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Create Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2";
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "error";
+            $a_p_i_activities->save();
+
+            return response()->json(['error' => 'Invalid token for AWS'], 401);
+        
+        }else {
+            
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Create Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2";
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "success";
+            $a_p_i_activities->save();
+
         }
 
         // Create a new EC2 client
@@ -187,47 +210,6 @@ class EC2ConsoleController extends Controller
         return response()->json(['message' => 'Instance updated successfully'], 200);
     }
 
-
-    
-    // Remove the specified resource from storage.
-
-    public function destroy(string $instanceId) {
-
-        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
-
-        $accessToken = \DB::table('personal_access_tokens')
-            ->where('token', hash('sha256', $userToken))
-            ->first();
-
-        $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
-
-        try {
-            // Create a new EC2 client
-            $ec2Client = new Ec2Client([
-                'region' => 'eu-south-1', // Set the desired AWS region
-                'version' => 'latest', // Set the desired AWS SDK version
-                'credentials' => [
-                    'key' => $EC2Console->key,
-                    'secret' => $EC2Console->secret,
-                ],
-            ]);
-    
-            // Terminate the EC2 instance
-            $result = $ec2Client->terminateInstances([
-                'InstanceIds' => [$instanceId],
-            ]);
-    
-            // Retrieve the termination state of the instance
-            $terminationState = $result->get('TerminatingInstances')[0]['CurrentState']['Name'];
-    
-            return response()->json(['message' => 'Instance terminated successfully. Termination state: ' . $terminationState], 200);
-        } catch (\Exception $e) {
-            // Handle the exception if the termination fails
-            return response()->json(['error' => 'Failed to terminate the instance: ' . $e->getMessage()], 500);
-        }
-    }
-
-
     //START Instance
     public function startInstance($instanceId) {
 
@@ -238,7 +220,32 @@ class EC2ConsoleController extends Controller
             ->first();
 
         $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
+
+        if (!$EC2Console) {
+
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Start Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2/".$instanceId;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "error";
+            $a_p_i_activities->save();
+
+            return response()->json(['error' => 'Invalid token for AWS'], 401);
         
+        }else {
+            
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Start Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2/".$instanceId;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "success";
+            $a_p_i_activities->save();
+
+        }        
 
         try {
             // Create a new EC2 client
@@ -315,6 +322,31 @@ class EC2ConsoleController extends Controller
 
         $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
         
+        if (!$EC2Console) {
+
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Stop Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2/off/".$instanceId;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "error";
+            $a_p_i_activities->save();
+
+            return response()->json(['error' => 'Invalid token for AWS'], 401);
+        
+        }else {
+            
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Stop Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2/off/".$instanceId;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "success";
+            $a_p_i_activities->save();
+
+        }
 
         try {
             // Create a new EC2 client
@@ -351,6 +383,32 @@ class EC2ConsoleController extends Controller
             ->first();
     
         $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
+
+        if (!$EC2Console) {
+
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Reboot Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2/boot/".$instanceId;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "error";
+            $a_p_i_activities->save();
+
+            return response()->json(['error' => 'Invalid token for AWS'], 401);
+        
+        }else {
+            
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Reboot Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2/boot/".$instanceId;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "success";
+            $a_p_i_activities->save();
+
+        }
     
         try {
             // Create a new EC2 client
@@ -379,4 +437,69 @@ class EC2ConsoleController extends Controller
             return response()->json(['error' => 'Failed to reboot the instance: ' . $e->getMessage()], 500);
         }
     }    
+
+    
+    // Remove the specified resource from storage.
+
+    public function destroy(string $instanceId) {
+
+        $userToken = request()->bearerToken(); // Assuming the token is sent as a bearer token
+
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        $EC2Console = EC2Console::all('token_id','key','secret')->where('token_id', $accessToken->id)->first();
+
+        if (!$EC2Console) {
+
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Terminate Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2/".$instanceId;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "error";
+            $a_p_i_activities->save();
+
+            return response()->json(['error' => 'Invalid token for AWS'], 401);
+        
+        }else {
+            
+            //Store API Activities
+            $a_p_i_activities = new APIActivity();
+            $a_p_i_activities->token_id = $accessToken->id;
+            $a_p_i_activities->resource = "Terminate Instance";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/ec2/".$instanceId;
+            $a_p_i_activities->ip_address = request()->ip();
+            $a_p_i_activities->response = "success";
+            $a_p_i_activities->save();
+
+        }
+
+        try {
+            // Create a new EC2 client
+            $ec2Client = new Ec2Client([
+                'region' => 'eu-south-1', // Set the desired AWS region
+                'version' => 'latest', // Set the desired AWS SDK version
+                'credentials' => [
+                    'key' => $EC2Console->key,
+                    'secret' => $EC2Console->secret,
+                ],
+            ]);
+    
+            // Terminate the EC2 instance
+            $result = $ec2Client->terminateInstances([
+                'InstanceIds' => [$instanceId],
+            ]);
+    
+            // Retrieve the termination state of the instance
+            $terminationState = $result->get('TerminatingInstances')[0]['CurrentState']['Name'];
+    
+            return response()->json(['message' => 'Instance terminated successfully. Termination state: ' . $terminationState], 200);
+        } catch (\Exception $e) {
+            // Handle the exception if the termination fails
+            return response()->json(['error' => 'Failed to terminate the instance: ' . $e->getMessage()], 500);
+        }
+    }
 }

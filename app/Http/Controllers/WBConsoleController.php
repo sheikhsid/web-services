@@ -96,7 +96,7 @@ class WBConsoleController extends Controller
             $a_p_i_activities = new APIActivity();
             $a_p_i_activities->token_id = $accessToken->id;
             $a_p_i_activities->resource = "Create Room";
-            $a_p_i_activities->endpoint = "https://" . parse_url(url(''), PHP_URL_HOST) . "/wb";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/wb";
             $a_p_i_activities->ip_address = request()->ip();
             $a_p_i_activities->response = "error";
             $a_p_i_activities->save();
@@ -109,7 +109,7 @@ class WBConsoleController extends Controller
             $a_p_i_activities = new APIActivity();
             $a_p_i_activities->token_id = $accessToken->id;
             $a_p_i_activities->resource = "Create Room";
-            $a_p_i_activities->endpoint = "https://" . parse_url(url(''), PHP_URL_HOST) . "/wb";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/wb";
             $a_p_i_activities->ip_address = request()->ip();
             $a_p_i_activities->response = "success";
             $a_p_i_activities->save();
@@ -191,8 +191,8 @@ class WBConsoleController extends Controller
             //Store API Activities
             $a_p_i_activities = new APIActivity();
             $a_p_i_activities->token_id = $accessToken->id;
-            $a_p_i_activities->resource = "Create Room";
-            $a_p_i_activities->endpoint = "https://" . parse_url(url(''), PHP_URL_HOST) . "/wb/".$id;
+            $a_p_i_activities->resource = "Delete Room";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/wb/".$id;
             $a_p_i_activities->ip_address = request()->ip();
             $a_p_i_activities->response = "error";
             $a_p_i_activities->save();
@@ -204,8 +204,8 @@ class WBConsoleController extends Controller
             //Store API Activities
             $a_p_i_activities = new APIActivity();
             $a_p_i_activities->token_id = $accessToken->id;
-            $a_p_i_activities->resource = "Create Room";
-            $a_p_i_activities->endpoint = "https://" . parse_url(url(''), PHP_URL_HOST) . "/wb/".$id;
+            $a_p_i_activities->resource = "Delete Room";
+            $a_p_i_activities->endpoint = parse_url(url(''), PHP_URL_HOST) . "/wb/".$id;
             $a_p_i_activities->ip_address = request()->ip();
             $a_p_i_activities->response = "success";
             $a_p_i_activities->save();
