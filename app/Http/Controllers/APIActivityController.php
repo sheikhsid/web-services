@@ -4,9 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\APIActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class APIActivityController extends Controller
 {
+    
+    function getActivities(){
+        
+        $APIActivities = APIActivity::paginate(20);
+        $accessToken = \DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->select('id', 'name', 'last_used_at')->get();
+
+        return view('api', compact('APIActivities', 'accessToken'));    
+
+    }
+
+    function getActivity($id){
+        
+
+        $APIActivities = APIActivity::where('token_id', $id)->paginate(20);
+        $accessToken = \DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->select('id', 'name', 'last_used_at')->get();
+
+        return view('api', compact('APIActivities', 'accessToken'));    
+
+    }
+    
     /**
      * Display a listing of the resource.
      */
