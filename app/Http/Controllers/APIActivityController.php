@@ -11,7 +11,7 @@ class APIActivityController extends Controller
     
     function getActivities(){
         
-        $APIActivities = APIActivity::paginate(20);
+        $APIActivities = APIActivity::orderBy('created_at', 'desc')->paginate(20);
         $accessToken = \DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->select('id', 'name', 'last_used_at')->get();
 
         return view('api', compact('APIActivities', 'accessToken'));    
@@ -21,7 +21,7 @@ class APIActivityController extends Controller
     function getActivity($id){
         
 
-        $APIActivities = APIActivity::where('token_id', $id)->paginate(20);
+        $APIActivities = APIActivity::orderBy('created_at', 'desc')->where('token_id', $id)->paginate(20);
         $accessToken = \DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->select('id', 'name', 'last_used_at')->get();
 
         return view('api', compact('APIActivities', 'accessToken'));    
