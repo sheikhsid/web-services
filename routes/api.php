@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EC2ConsoleController;
 use App\Http\Controllers\WBConsoleController;
 use App\Http\Controllers\ScreenshotController;
+use App\Http\Controllers\HoloroomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Screenshot Routes
     Route::resource('screenshots', ScreenshotController::class);
+
+    //Holoroom (KiraNet) Routes 
+    Route::resource('holorooms', HoloroomController::class);
+
     // Route::post('/screenshots', 'ScreenshotController@store');
     // Route::get('/screenshots/{screenshot}', 'ScreenshotController@show');
     // Route::delete('/screenshots/{screenshot}', 'ScreenshotController@destroy');
