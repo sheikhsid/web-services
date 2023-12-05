@@ -39,8 +39,4 @@ Route::middleware('auth:sanctum')->group(function () {
     //Holoroom (KiraNet) Routes 
     Route::resource('holorooms', HoloroomController::class);
 
-    // Route::post('/screenshots', 'ScreenshotController@store');
-    // Route::get('/screenshots/{screenshot}', 'ScreenshotController@show');
-    // Route::delete('/screenshots/{screenshot}', 'ScreenshotController@destroy');
-
 });
