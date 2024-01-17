@@ -6,6 +6,7 @@ use App\Http\Controllers\EC2ConsoleController;
 use App\Http\Controllers\WBConsoleController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\HoloroomController;
+use App\Http\Controllers\VCSConsoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,5 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Holoroom (KiraNet) Routes 
     Route::resource('holorooms', HoloroomController::class);
+
+    //VCS API Routes
+    Route::resource('vcs', VCSConsoleController::class);
 
 });
