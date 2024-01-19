@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('token_id');
             $table->string('instanceId');
             $table->string('publicDnsName');
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -27,7 +27,8 @@ class VCSConsoleController extends Controller
         // Check if access token is valid
         if ($accessToken) {
             // Fetch instances from the database
-            $VCSConsole = VCSConsole::all('instanceId', 'publicDnsName', 'token_id')->where('token_id', $accessToken->id);
+           
+            $VCSConsole = VCSConsole::all('instanceId', 'publicDnsName', 'token_id', 'status')->where('token_id', $accessToken->id)->where('status', '0');
 
             // Initialize variables to track whether any valid instance is found
             $validInstanceFound = false;
@@ -58,6 +59,8 @@ class VCSConsoleController extends Controller
                 // No valid instance found
                 return response()->json(['error' => 'No server available'], 404);
             }
+
+
 
             // Return the response with instanceId and publicDnsName
             return response()->json($responseData);
