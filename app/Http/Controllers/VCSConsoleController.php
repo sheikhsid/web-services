@@ -94,9 +94,32 @@ class VCSConsoleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(VCSConsole $vCSConsole)
+    public function show(string $instanceId)
     {
-        echo "show";
+
+        // Get the user token from the request
+        $userToken = request()->bearerToken();
+
+        // Query personal access tokens table
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        // Check if access token is valid
+        if ($accessToken) {
+
+            $VCSConsole = VCSConsole::where('instanceId', $instanceId)->select('status')->first();
+
+            return [
+                "status" => $VCSConsole->status,
+            ];
+
+        }else {
+            // Handle the case when the access token is not valid
+            // For example, you can return an error response
+            return response()->json(['error' => 'Invalid access token'], 401);
+        }
+        
     }
 
     /**
@@ -110,9 +133,35 @@ class VCSConsoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, VCSConsole $vCSConsole)
+    public function update(Request $request, string $instanceId)
     {
-        echo "update";
+        // Get the user token from the request
+        $userToken = request()->bearerToken();
+
+        // Query personal access tokens table
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        // Check if access token is valid
+        if ($accessToken) {
+
+            $VCSConsole = VCSConsole::where('instanceId', $instanceId)->first();
+            $VCSConsole->status=1;
+            $VCSConsole->save();
+            
+            return [
+                "status" => $VCSConsole->status,
+            ];
+
+        }else {
+            // Handle the case when the access token is not valid
+            // For example, you can return an error response
+            return response()->json(['error' => 'Invalid access token'], 401);
+        }
+
+        
+
     }
 
     /**

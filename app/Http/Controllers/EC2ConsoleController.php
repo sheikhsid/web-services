@@ -172,8 +172,8 @@ class EC2ConsoleController extends Controller
         // Return the public IP address, DNS, and instance ID in the response
         return response()->json([
             'instanceId' => $instanceId,
-            // 'publicIpAddress' => $publicIpAddress,
-            // 'publicDnsName' => $publicDnsName,
+            'publicIpAddress' => $publicIpAddress,
+            'publicDnsName' => $publicDnsName,
         ]);
     }
 
@@ -293,7 +293,8 @@ class EC2ConsoleController extends Controller
 
             return response()->json([
                 'instanceId' => $instanceId,
-                // 'publicDnsName' => $publicDnsName,
+                'publicIpAddress' => $publicIpAddress,
+                'publicDnsName' => $publicDnsName,
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to start the instance: ' . $e->getMessage()], 500);
