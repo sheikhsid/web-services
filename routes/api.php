@@ -42,5 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //VCS API Routes
     Route::resource('vcs', VCSConsoleController::class);
+    Route::post("vcs/off/{instanceId}", [VCSConsoleController::class,'stopInstance']);
+    Route::post("vcs/boot/{instanceId}", [VCSConsoleController::class,'rebootInstance']);
 
 });
