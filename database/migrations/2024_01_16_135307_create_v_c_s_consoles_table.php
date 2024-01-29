@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('v_c_s_consoles', function (Blueprint $table) {
             $table->id();
+            $table->string('user');
             $table->string('token_id');
             $table->string('instanceId');
             $table->string('publicDnsName');

@@ -5,12 +5,53 @@ namespace App\Http\Controllers;
 use App\Models\VCSConsole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 
 class VCSConsoleController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
+     * Opration of AWS EC2 Console
+     */ 
+
+     function getCredentials(){
+        
+        $VCSConsoles = VCSConsole::all()->where('user', Auth::user()->id);
+        $accessTokens = \DB::table('personal_access_tokens')->where('tokenable_id', Auth::user()->id)->select('id', 'name')->get();
+    
+        return view('services.vcs-console', compact('VCSConsoles', 'accessTokens'));
+    }    
+    
+    //Check validation and add product
+    function addCredentials(Request $req){
+
+        $req->validate([
+            'token_id'=>'required | max:225',
+            'instanceId'=>'required | max:225',
+            'publicDnsName'=>'required | max:225',          
+        ]);
+
+        $credential= new VCSConsole;
+        $credential->user=Auth::user()->id;
+        $credential->token_id=$req->token_id;
+        $credential->instanceId=$req->instanceId;
+        $credential->publicDnsName=$req->publicDnsName;
+        $credential->save();
+
+        return redirect('/vcs-console');
+
+    }
+
+     //Delete Data
+     function deleteCredentials($id){
+
+        $data= VCSConsole::find($id);
+        $data->delete();  
+        return redirect('/vcs-console');     
+
+    }
+    
+    
+    
 
     // $VCSConsole = VCSConsole::where('token_id', $accessToken->id)->get(['instanceId', 'publicDnsName', 'token_id']);
 
