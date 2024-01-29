@@ -57,7 +57,26 @@ class VCSConsoleController extends Controller
 
     public function index()
     {
-        echo "index";
+        // Get the user token from the request
+        $userToken = request()->bearerToken();
+
+        // Query personal access tokens table
+        $accessToken = \DB::table('personal_access_tokens')
+            ->where('token', hash('sha256', $userToken))
+            ->first();
+
+        // Check if access token is valid
+        if ($accessToken) {
+
+            $VCSConsole = VCSConsole::where('token_id', $accessToken->id)->get(['instanceId', 'publicDnsName', 'status']);
+
+            return $VCSConsole;
+
+        }else {
+            // Handle the case when the access token is not valid
+            // For example, you can return an error response
+            return response()->json(['error' => 'Invalid access token'], 401);
+        }
     }
 
 

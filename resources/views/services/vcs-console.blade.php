@@ -94,7 +94,7 @@
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">{{ __('Manage VCS Credentials') }}</h3>
 
                                 <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                    {{ __('Controlling Access Key IDs and Secret Access Keys by viewing or removing them as needed for users, ensuring secure and up-to-date access to AWS services.') }}
+                                    {{ __('Here, you can view the details and status of your added instances, along with their timing information. Additionally, you have the capability to remove instances as needed.') }}
                                 </p>
                             </div>
                         </div>
