@@ -47,7 +47,7 @@ class VCSConsoleController extends Controller
         if ($accessToken) {
             // Fetch instances from the database
            
-            $VCSConsole = VCSConsole::all('instanceId', 'publicDnsName', 'token_id', 'status')->where('token_id', $accessToken->id)->where('status', '');
+            $VCSConsole = VCSConsole::all('instanceId', 'publicDnsName', 'token_id', 'status')->where('token_id', $accessToken->id)->where('status', '0');
 
             // Initialize variables to track whether any valid instance is found
             $validInstanceFound = false;
@@ -68,7 +68,7 @@ class VCSConsoleController extends Controller
                 if (isset($responseContent['instanceId']) && $responseContent['instanceId'] === $instanceId) {
 
                     $VCSConsole = VCSConsole::where('instanceId', $instanceId)->first();
-                    $VCSConsole->status=0;
+                    $VCSConsole->status=1;
                     $VCSConsole->save();
 
                     // Valid instance found, update the response data
@@ -140,6 +140,7 @@ class VCSConsoleController extends Controller
      */
     public function update(Request $request, string $instanceId)
     {
+        
         // Get the user token from the request
         $userToken = request()->bearerToken();
 
@@ -151,17 +152,19 @@ class VCSConsoleController extends Controller
         // Check if access token is valid
         if ($accessToken) {
 
-            $VCSConsole = VCSConsole::where('instanceId', $instanceId)->first();
-            $VCSConsole->status=1;
-            $VCSConsole->save();
+           // Make a POST request to the external API for the current instance
+           $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $userToken,
+            ])->post("https://webservices.immensive.it/api/ec2/boot/{$instanceId}");
+
+            // $VCSConsole = VCSConsole::where('instanceId', $instanceId)->first();
+            // $VCSConsole->status=0;
+            // $VCSConsole->save();
             
-            return [
-                "status" => $VCSConsole->status,
-            ];
+            // Response content
+            return response()->json(['message' => 'Server is Rebooting'], 200);
 
         }else {
-            // Handle the case when the access token is not valid
-            // For example, you can return an error response
             return response()->json(['error' => 'Invalid access token'], 401);
         }
 
@@ -195,7 +198,7 @@ class VCSConsoleController extends Controller
             ])->post("https://webservices.immensive.it/api/ec2/off/{$instanceId}");
 
             $VCSConsole = VCSConsole::where('instanceId', $instanceId)->first();
-            $VCSConsole->status='';
+            $VCSConsole->status='0';
             $VCSConsole->save();
             
             // Response content
@@ -206,34 +209,5 @@ class VCSConsoleController extends Controller
         }
 
     }
-    //Reboot Instance
-    public function rebootInstance($instanceId) {
 
-        // Get the user token from the request
-        $userToken = request()->bearerToken();
-
-        // Query personal access tokens table
-        $accessToken = \DB::table('personal_access_tokens')
-            ->where('token', hash('sha256', $userToken))
-            ->first();
-
-        // Check if access token is valid
-        if ($accessToken) {
-
-           // Make a POST request to the external API for the current instance
-           $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $userToken,
-            ])->post("https://webservices.immensive.it/api/ec2/boot/{$instanceId}");
-
-            $VCSConsole = VCSConsole::where('instanceId', $instanceId)->first();
-            $VCSConsole->status=0;
-            $VCSConsole->save();
-            
-            // Response content
-            return response()->json(['message' => 'Server is Rebooting'], 200);
-
-        }else {
-            return response()->json(['error' => 'Invalid access token'], 401);
-        }
-    }
 }
