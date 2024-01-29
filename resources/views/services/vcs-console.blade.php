@@ -25,6 +25,11 @@
                                     <th>Method</th>
                                 </tr>
                                 <tr>
+                                    <td>List of Instances</td>
+                                    <td>https://<span title="{{ parse_url(url(''), PHP_URL_HOST) }}" style="color: #6875f5;">HOST</span>/api/vcs</td>
+                                    <td>GET</td>
+                                </tr>
+                                <tr>
                                     <td>Start Available Instance</td>
                                     <td>https://<span title="{{ parse_url(url(''), PHP_URL_HOST) }}" style="color: #6875f5;">HOST</span>/api/vcs</td>
                                     <td>POST</td>
