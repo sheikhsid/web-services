@@ -139,7 +139,7 @@
                                                 Off
                                                 @endif
                                             </a>
-                                            <a href="/ec2-console/{{ $VCSConsole->id }}" class="cursor-pointer ml-6 text-sm text-red-500">Delete</a>
+                                            <a href="/vcs-console/{{ $VCSConsole->id }}" class="cursor-pointer ml-6 text-sm text-red-500">Delete</a>
                                         </div>
                                     </div>
                                 @endforeach
