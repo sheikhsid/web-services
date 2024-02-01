@@ -35,6 +35,7 @@ class VCSConsoleController extends Controller
         $credential->token_id=$req->token_id;
         $credential->instanceId=$req->instanceId;
         $credential->publicDnsName=$req->publicDnsName;
+        $credential->status=0;
         $credential->save();
 
         return redirect('/vcs-console');

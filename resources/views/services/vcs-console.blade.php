@@ -49,7 +49,10 @@
                                     <td>https://<span title="{{ parse_url(url(''), PHP_URL_HOST) }}" style="color: #6875f5;">HOST</span>/api/vcs/{instanceId}</td>
                                     <td>POST</td>
                                 </tr>
-                            </table>
+                            </table></br></br>
+                            <a href="https://webservices.immensive.it/documents/overview-of-the-vcs-api-implementation.pdf" target="_blank" 
+                            class="px-4 py-2 bg-gray-800 dark:bg-gray-200 rounded-md font-semibold text-xs dark:text-gray-800 uppercase hover:bg-gray-700 
+                            dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white">Documentation</a>
                         </div>
                     </div>
                     <div class="mt-5 md:mt-0 md:col-span-2">
