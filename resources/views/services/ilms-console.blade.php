@@ -144,9 +144,9 @@
                                             <div class="text-sm text-gray-400">
                                                 @if ($ILMSConsole->updated_at)
                                                     <?php $carbonDate = \Carbon\Carbon::parse($ILMSConsole->updated_at); ?>
-                                                    {{ __('Last used') }} {{ $carbonDate->diffForHumans() }}
+                                                    {{ __('Created') }} {{ $carbonDate->diffForHumans() }}
                                                 @else
-                                                    {{ __('Last used') }} {{ __('Never') }}
+                                                    {{ __('Created') }} {{ __('Never') }}
                                                 @endif
                                             </div>
                                             <a href="{{ $ILMSConsole->publicDnsName }}" target="_blank" class="cursor-pointer ml-6 text-sm text-gray-400 underline" title="{{ $ILMSConsole->publicDnsName }}">
