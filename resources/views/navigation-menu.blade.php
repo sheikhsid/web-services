@@ -136,6 +136,10 @@
                                 {{ __('VCS Console') }}
                             </x-dropdown-link>
 
+                            <x-dropdown-link href="/ilms-console">
+                                {{ __('ILMS Console') }}
+                            </x-dropdown-link>
+
                             <!-- <div class="border-t border-gray-200 dark:border-gray-600"></div> -->
 
                         </x-slot>

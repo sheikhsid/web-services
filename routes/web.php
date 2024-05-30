@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\VCSConsoleController;
+use App\Http\Controllers\ILMSConsoleController;
 use App\Http\Controllers\EC2ConsoleController;
 use App\Http\Controllers\WBConsoleController;
 use App\Http\Controllers\APIActivityController;
@@ -34,6 +35,12 @@ Route::middleware(['auth:sanctum',config('jetstream.auth_session'),'verified',])
         Route::post('/vcs-console',[VCSConsoleController::class,'addCredentials'])->name('/vcs-console');
         Route::get('/vcs-console/{id}',[VCSConsoleController::class,'deleteCredentials'])->name('/vcs-console');
 
+        //iLMS Routes
+        Route::get('/ilms-console',[ILMSConsoleController::class,'getCredentials'])->name('/ilms-console');
+        Route::post('/ilms-console',[ILMSConsoleController::class,'addCredentials'])->name('/ilms-console');
+        Route::get('/ilms-console/{id}',[ILMSConsoleController::class,'deleteCredentials'])->name('/ilms-console');
+
+        
         //AWS Routes
         Route::get('/ec2-console',[EC2ConsoleController::class,'getCredentials'])->name('/ec2-console');
         Route::post('/ec2-console',[EC2ConsoleController::class,'addCredentials'])->name('/ec2-console');

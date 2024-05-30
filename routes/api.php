@@ -7,6 +7,7 @@ use App\Http\Controllers\WBConsoleController;
 use App\Http\Controllers\ScreenshotController;
 use App\Http\Controllers\HoloroomController;
 use App\Http\Controllers\VCSConsoleController;
+use App\Http\Controllers\ILMSConsoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,5 +44,16 @@ Route::middleware('auth:sanctum')->group(function () {
     //VCS API Routes
     Route::resource('vcs', VCSConsoleController::class);
     Route::post("vcs/{instanceId}", [VCSConsoleController::class,'stopInstance']);
+
+    //ILMS API Routes
+    Route::resource('licenses', ILMSConsoleController::class);
+    
+    Route::get("versions/{id}", [ILMSConsoleController::class,'versionsGET']);
+    Route::get("institute/{id}", [ILMSConsoleController::class,'instituteGET']);
+
+    Route::post("student/on", [ILMSConsoleController::class,'studentPOST']);
+    Route::put("student/{id}", [ILMSConsoleController::class,'studentPUT']);
+    Route::get("student/{id}", [ILMSConsoleController::class,'studentGET']);
+    Route::delete("student/{id}", [ILMSConsoleController::class,'studentDELETE']);
 
 });
